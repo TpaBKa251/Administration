@@ -3,7 +3,7 @@ services:
   postgres:
     container_name: administrationDB
     image: postgres:15
-    hostname: localhost
+    hostname: administrationDB
     environment:
       - POSTGRES_DB=administrationService
       - POSTGRES_USER=admin
@@ -21,8 +21,8 @@ services:
     depends_on:
       - postgres
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5434/administrationService
-      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://administrationDB:5432/administrationService
+      - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=ilia
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]

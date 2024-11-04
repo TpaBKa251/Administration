@@ -8,7 +8,7 @@ spring:
       hibernate:
         format_sql: true
   datasource:
-    url: jdbc:postgresql://localhost:5434/administrationService
+    url: jdbc:postgresql://administrationDB:5432/administrationService
     username: admin
     password: ilia
   flyway:
