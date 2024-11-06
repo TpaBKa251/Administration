@@ -13,7 +13,7 @@ import java.util.UUID;
 @FeignClient(name = "user-userservice", url = "http://userservice:8080")
 public interface UserServiceClient {
 
-    @GetMapping("/users/get_by_id/{id}")
+    @GetMapping("/users/get/by/id/{id}")
     ResponseEntity<?> getUserById(@PathVariable UUID id);
 }
 

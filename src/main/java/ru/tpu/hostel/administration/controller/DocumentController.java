@@ -35,23 +35,23 @@ public class DocumentController {
         return documentService.editDocument(documentEditRequestDto);
     }
 
-    @GetMapping("/get_by_id")
-    public DocumentResponseDto getDocumentById(UUID id) {
+    @GetMapping("/get/by/id/{id}")
+    public DocumentResponseDto getDocumentById(@PathVariable UUID id) {
         return documentService.getDocumentById(id);
     }
 
-    @GetMapping("/get/all/user")
-    public List<DocumentResponseDto> getAllDocumentsByUser(UUID userId) {
+    @GetMapping("/get/all/user/{userId}")
+    public List<DocumentResponseDto> getAllDocumentsByUser(@PathVariable UUID userId) {
         return documentService.getAllUserDocuments(userId);
     }
 
     @GetMapping("/get/all")
     public List<DocumentResponseDto> getAllDocuments() {
-
+        return documentService.getAllUserDocuments();
     }
 
-    @GetMapping("/get/type/user")
-    public DocumentResponseDto getDocumentByType(UUID userId, DocumentType documentType) {
+    @GetMapping("/get/type/{documentType}/user/{userId}")
+    public DocumentResponseDto getDocumentByType(@PathVariable UUID userId, @PathVariable DocumentType documentType) {
         return documentService.getUserDocumentsByType(userId, documentType);
     }
 

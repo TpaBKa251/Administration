@@ -65,6 +65,10 @@ public class DocumentServiceImpl implements DocumentService {
     public List<DocumentResponseDto> getAllUserDocuments(UUID userId) {
         List<Document> documents = documentRepository.findAllByUser(userId);
 
+        if (documents.isEmpty()) {
+            throw new DocumentNotFound("Документ не найден");
+        }
+
         return documents
                 .stream()
                 .map(DocumentMapper::mapDocumentToDocumentResponseDto)
@@ -82,6 +86,10 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     public List<DocumentResponseDto> getAllUserDocuments() {
         List<Document> documents = documentRepository.findAll();
+
+        if (documents.isEmpty()) {
+            throw new DocumentNotFound("Документ не найден");
+        }
 
         return documents.stream()
                 .map(DocumentMapper::mapDocumentToDocumentResponseDto)

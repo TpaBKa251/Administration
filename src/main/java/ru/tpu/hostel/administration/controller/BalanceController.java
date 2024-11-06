@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,8 +39,8 @@ public class BalanceController {
         return balanceService.editBalanceWithAddingAmount(balanceRequestDto);
     }
 
-    @GetMapping("/get")
-    public BalanceResponseDto getBalance(UUID id) {
+    @GetMapping("/get/{id}")
+    public BalanceResponseDto getBalance(@PathVariable UUID id) {
         return balanceService.getBalance(id);
     }
 
@@ -48,8 +49,8 @@ public class BalanceController {
         return balanceService.getAllBalances();
     }
 
-    @GetMapping("/get/short")
-    public BalanceShortResponseDto getBalanceShort(UUID id) {
+    @GetMapping("/get/short/{id}")
+    public BalanceShortResponseDto getBalanceShort(@PathVariable UUID id) {
         return balanceService.getBalanceShort(id);
     }
 }

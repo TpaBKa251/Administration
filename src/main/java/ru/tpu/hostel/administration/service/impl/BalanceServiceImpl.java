@@ -90,6 +90,10 @@ public class BalanceServiceImpl implements BalanceService {
     public List<BalanceResponseDto> getAllBalances() {
         List<Balance> balances = balanceRepository.findAll();
 
+        if (balances.isEmpty()) {
+            throw new BalanceNotFound("Баланс не найден");
+        }
+
         return balances.stream()
                 .map(BalanceMapper::mapBalanceToBalanceResponseDto)
                 .toList();
