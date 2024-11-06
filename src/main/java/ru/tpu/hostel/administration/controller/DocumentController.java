@@ -45,8 +45,15 @@ public class DocumentController {
         return documentService.getAllUserDocuments(userId);
     }
 
+    @GetMapping("/get/all")
+    public List<DocumentResponseDto> getAllDocuments() {
+
+    }
+
     @GetMapping("/get/type/user")
     public DocumentResponseDto getDocumentByType(UUID userId, DocumentType documentType) {
         return documentService.getUserDocumentsByType(userId, documentType);
     }
+
+
 }

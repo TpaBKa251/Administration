@@ -13,6 +13,7 @@ import ru.tpu.hostel.administration.dto.response.BalanceResponseDto;
 import ru.tpu.hostel.administration.dto.response.BalanceShortResponseDto;
 import ru.tpu.hostel.administration.service.BalanceService;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -40,6 +41,11 @@ public class BalanceController {
     @GetMapping("/get")
     public BalanceResponseDto getBalance(UUID id) {
         return balanceService.getBalance(id);
+    }
+
+    @GetMapping("/get/all")
+    public List<BalanceResponseDto> getAllBalances() {
+        return balanceService.getAllBalances();
     }
 
     @GetMapping("/get/short")

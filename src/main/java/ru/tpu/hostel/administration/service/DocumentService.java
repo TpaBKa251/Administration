@@ -19,4 +19,6 @@ public interface DocumentService {
     List<DocumentResponseDto> getAllUserDocuments(UUID userId);
 
     DocumentResponseDto getUserDocumentsByType(UUID userId, DocumentType documentType);
+
+    List<DocumentResponseDto> getAllUserDocuments();
 }

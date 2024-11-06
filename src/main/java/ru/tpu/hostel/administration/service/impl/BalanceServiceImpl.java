@@ -14,6 +14,7 @@ import ru.tpu.hostel.administration.mapper.BalanceMapper;
 import ru.tpu.hostel.administration.repository.BalanceRepository;
 import ru.tpu.hostel.administration.service.BalanceService;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -83,5 +84,14 @@ public class BalanceServiceImpl implements BalanceService {
                 .orElseThrow(() -> new BalanceNotFound("Баланс не найден"));
 
         return BalanceMapper.mapBalanceToBalanceShortResponseDto(balance);
+    }
+
+    @Override
+    public List<BalanceResponseDto> getAllBalances() {
+        List<Balance> balances = balanceRepository.findAll();
+
+        return balances.stream()
+                .map(BalanceMapper::mapBalanceToBalanceResponseDto)
+                .toList();
     }
 }

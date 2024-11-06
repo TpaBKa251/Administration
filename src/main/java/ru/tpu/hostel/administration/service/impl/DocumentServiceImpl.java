@@ -78,4 +78,13 @@ public class DocumentServiceImpl implements DocumentService {
 
         return DocumentMapper.mapDocumentToDocumentResponseDto(document);
     }
+
+    @Override
+    public List<DocumentResponseDto> getAllUserDocuments() {
+        List<Document> documents = documentRepository.findAll();
+
+        return documents.stream()
+                .map(DocumentMapper::mapDocumentToDocumentResponseDto)
+                .toList();
+    }
 }
