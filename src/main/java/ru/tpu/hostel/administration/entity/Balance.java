@@ -18,7 +18,7 @@ import java.util.UUID;
 public class Balance {
 
     @Id
-    @Column(name = "user", nullable = false)
+    @Column(name = "\"user\"", nullable = false)
     private UUID user;
 
     @Column(name = "balance")

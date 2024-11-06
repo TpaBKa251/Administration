@@ -26,7 +26,7 @@ public class Document {
     @Column(name = "id", nullable = false)
     private UUID id;
 
-    @Column(name = "user", nullable = false)
+    @Column(name = "\"user\"", nullable = false)
     private UUID user;
 
     @Column(name = "\"type\"")

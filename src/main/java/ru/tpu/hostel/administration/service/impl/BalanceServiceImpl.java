@@ -25,7 +25,14 @@ public class BalanceServiceImpl implements BalanceService {
 
     @Override
     public BalanceResponseDto addBalance(BalanceRequestDto balanceRequestDto) {
-        ResponseEntity<?> response = userServiceClient.getUserById(balanceRequestDto.user());
+        ResponseEntity<?> response;
+
+        try {
+            response = userServiceClient.getUserById(balanceRequestDto.user());
+        } catch (Exception e) {
+            throw new UserNotFound("Пользователь не найден");
+        }
+
 
         if (!response.getStatusCode().is2xxSuccessful()) {
             throw new UserNotFound("Пользователь не найден");
