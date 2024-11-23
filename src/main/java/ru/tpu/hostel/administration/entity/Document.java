@@ -15,10 +15,10 @@ import ru.tpu.hostel.administration.enums.DocumentType;
 import java.time.LocalDate;
 import java.util.UUID;
 
-@Entity
 @Getter
 @Setter
-@Table(name = "document")
+@Entity
+@Table(name = "document", schema = "administration") // Указание схемы
 public class Document {
 
     @Id
@@ -26,16 +26,16 @@ public class Document {
     @Column(name = "id", nullable = false)
     private UUID id;
 
-    @Column(name = "\"user\"", nullable = false)
+    @Column(name = "\"user\"", nullable = false) // Поле user как UUID
     private UUID user;
 
-    @Column(name = "\"type\"")
     @Enumerated(EnumType.STRING)
+    @Column(name = "\"type\"", nullable = false) // Поле type как Enum
     private DocumentType type;
 
-    @Column(name = "start_date")
+    @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
-    @Column(name = "end_date")
+    @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 }

@@ -8,14 +8,15 @@ spring:
       hibernate:
         format_sql: true
   datasource:
-    url: jdbc:postgresql://administrationDB:5432/administrationService
-    username: admin
+    url: jdbc:postgresql://hostelDB:5432/hostelService
+    username: hostel
     password: ilia
   flyway:
     jdbc-properties:
       enabled: true
       locations:
         - db.migration
+    schemas: administration
 
 springdoc:
   swagger-ui:
