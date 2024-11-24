@@ -27,11 +27,11 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public DocumentResponseDto addDocument(DocumentRequestDto documentRequestDto) {
-        ResponseEntity<?> response = userServiceClient.getUserById(documentRequestDto.user());
-
-        if (!response.getStatusCode().is2xxSuccessful()) {
-            throw new UserNotFound("Пользователь не найден");
-        }
+//        ResponseEntity<?> response = userServiceClient.getUserById(documentRequestDto.user());
+//
+//        if (!response.getStatusCode().is2xxSuccessful()) {
+//            throw new UserNotFound("Пользователь не найден");
+//        }
 
         Document document = DocumentMapper.mapDocumentRequestToDocument(documentRequestDto);
 
