@@ -1,7 +1,10 @@
 package ru.tpu.hostel.administration.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.tpu.hostel.administration.client.UserServiceClient;
 import ru.tpu.hostel.administration.dto.request.BalanceRequestDto;
@@ -9,11 +12,11 @@ import ru.tpu.hostel.administration.dto.response.BalanceResponseDto;
 import ru.tpu.hostel.administration.dto.response.BalanceShortResponseDto;
 import ru.tpu.hostel.administration.entity.Balance;
 import ru.tpu.hostel.administration.exception.BalanceNotFound;
-import ru.tpu.hostel.administration.exception.UserNotFound;
 import ru.tpu.hostel.administration.mapper.BalanceMapper;
 import ru.tpu.hostel.administration.repository.BalanceRepository;
 import ru.tpu.hostel.administration.service.BalanceService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -87,14 +90,32 @@ public class BalanceServiceImpl implements BalanceService {
     }
 
     @Override
-    public List<BalanceResponseDto> getAllBalances() {
-        List<Balance> balances = balanceRepository.findAll();
+    public List<BalanceResponseDto> getAllBalances(int page, int size, Boolean negative, BigDecimal value) {
+        Page<Balance> balances;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("user"));
+
+        if (negative != null && value != null && negative) {
+            balances = balanceRepository.findAllByBalanceLessThanEqual(value, pageable);
+        } else if (negative != null && value != null) {
+            balances = balanceRepository.findAllByBalanceGreaterThan(value, pageable);
+        } else {
+            balances = balanceRepository.findAll(pageable);
+        }
 
         if (balances.isEmpty()) {
             throw new BalanceNotFound("Баланс не найден");
         }
 
         return balances.stream()
+                .map(BalanceMapper::mapBalanceToBalanceResponseDto)
+                .toList();
+    }
+
+    @Override
+    public List<BalanceResponseDto> getAllBalancesByUsers(List<UUID> userIds) {
+        return balanceRepository.findByUserInOrderByUser(userIds)
+                .stream()
                 .map(BalanceMapper::mapBalanceToBalanceResponseDto)
                 .toList();
     }

@@ -5,6 +5,7 @@ import ru.tpu.hostel.administration.dto.request.DocumentRequestDto;
 import ru.tpu.hostel.administration.dto.response.DocumentResponseDto;
 import ru.tpu.hostel.administration.enums.DocumentType;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,5 +21,14 @@ public interface DocumentService {
 
     DocumentResponseDto getUserDocumentsByType(UUID userId, DocumentType documentType);
 
-    List<DocumentResponseDto> getAllUserDocuments();
+    List<DocumentResponseDto> getAllUserDocuments(
+            int page,
+            int size,
+            Boolean flura,
+            LocalDate fluraTime,
+            Boolean cert,
+            LocalDate certDate
+    );
+
+    List<DocumentResponseDto> getAllDocumentsByUsers(List<UUID> userIds);
 }
