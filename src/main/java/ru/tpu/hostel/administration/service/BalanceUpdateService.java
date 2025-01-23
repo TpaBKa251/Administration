@@ -1,4 +1,4 @@
-package ru.tpu.hostel.administration.service.impl;
+package ru.tpu.hostel.administration.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.EnableScheduling;

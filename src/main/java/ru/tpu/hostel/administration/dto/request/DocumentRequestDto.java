@@ -1,6 +1,5 @@
 package ru.tpu.hostel.administration.dto.request;
 
-import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import ru.tpu.hostel.administration.enums.DocumentType;
 
@@ -18,7 +17,6 @@ public record DocumentRequestDto(
         LocalDate startDate,
 
         @NotNull(message = "Конечная дата не может быть пустой")
-        @Future(message = "Конечная дата должна быть в будущем")
         LocalDate endDate
 ) {
 }

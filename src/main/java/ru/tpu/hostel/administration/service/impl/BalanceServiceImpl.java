@@ -52,10 +52,16 @@ public class BalanceServiceImpl implements BalanceService {
     @Override
     public BalanceResponseDto editBalance(BalanceRequestDto balanceRequestDto) {
         Balance balance = balanceRepository.findById(balanceRequestDto.user())
-                .orElseThrow(() -> new BalanceNotFound("Баланс не найден"));
+                .orElse(null);
+
+        if (balance == null) {
+            balance = BalanceMapper.mapBalanceRequestDtoToBalance(balanceRequestDto);
+            balanceRepository.save(balance);
+
+            return BalanceMapper.mapBalanceToBalanceResponseDto(balance);
+        }
 
         balance.setBalance(balanceRequestDto.balance());
-
         balanceRepository.save(balance);
 
         return BalanceMapper.mapBalanceToBalanceResponseDto(balance);
@@ -64,10 +70,16 @@ public class BalanceServiceImpl implements BalanceService {
     @Override
     public BalanceResponseDto editBalanceWithAddingAmount(BalanceRequestDto balanceRequestDto) {
         Balance balance = balanceRepository.findById(balanceRequestDto.user())
-                .orElseThrow(() -> new BalanceNotFound("Баланс не найден"));
+                .orElse(null);
+
+        if (balance == null) {
+            balance = BalanceMapper.mapBalanceRequestDtoToBalance(balanceRequestDto);
+            balanceRepository.save(balance);
+
+            return BalanceMapper.mapBalanceToBalanceResponseDto(balance);
+        }
 
         balance.setBalance(balanceRequestDto.balance().add(balance.getBalance()));
-
         balanceRepository.save(balance);
 
         return BalanceMapper.mapBalanceToBalanceResponseDto(balance);

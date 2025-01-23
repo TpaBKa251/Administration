@@ -18,4 +18,6 @@ public interface BalanceRepository extends JpaRepository<Balance, UUID> {
     Page<Balance> findAllByBalanceGreaterThan(BigDecimal balance, Pageable pageable);
 
     List<Balance> findByUserInOrderByUser(List<UUID> ids);
+
+    List<Balance> findAllByBalanceLessThanEqual(BigDecimal balance);
 }

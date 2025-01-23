@@ -145,4 +145,6 @@ public interface DocumentRepository extends JpaRepository<Document, UUID> {
 
 
     List<Document> findByUserInOrderByUserAscTypeAsc(List<UUID> userIds);
+
+    List<Document> findAllByEndDateEquals(LocalDate endDate);
 }
