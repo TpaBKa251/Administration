@@ -36,14 +36,14 @@ public class NotificationScheduler {
 
     private final NotificationClient notificationClient;
 
-    @Scheduled(cron = "0 0 8 * * *", zone = "Asia/Tomsk")
+    @Scheduled(cron = "30 7 16 * * *", zone = "Asia/Tomsk")
     public void sendNotification() {
         LocalDate today = LocalDate.now(ZoneId.of("Asia/Tomsk"));
         LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
         LocalDate weekBeforeEnd = lastDayOfMonth.minusDays(WEEK_IN_DAYS);
 
         if (today.isEqual(weekBeforeEnd) || today.isEqual(lastDayOfMonth.minusDays(ONE_DAY))) {
-            sendNotificationAboutBalance(today);
+            sendNotificationAboutBalance(lastDayOfMonth);
         }
 
         LocalDate dayForDocuments = today.plusDays(WEEK_IN_DAYS_PLUS_ONE);
@@ -113,12 +113,12 @@ public class NotificationScheduler {
         if (today.isEqual(date)) {
             return "сегодня";
         }
-        if (today.isEqual(date.plusDays(ONE_DAY))) {
+        if (today.plusDays(ONE_DAY).isEqual(date)) {
             return expDate
                     ? "до завтра (" + expirationDate + ") включительно"
                     : "завтра (" + expirationDate + ")";
         }
-        if (today.isEqual(date.plusDays(TWO_DAYS))) {
+        if (today.plusDays(TWO_DAYS).isEqual(date)) {
             return expDate
                     ? "до послезавтра (" + expirationDate + ") включительно"
                     : "послезавтра (" + expirationDate + ")";
