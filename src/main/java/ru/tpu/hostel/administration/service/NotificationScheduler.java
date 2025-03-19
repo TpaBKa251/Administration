@@ -36,7 +36,7 @@ public class NotificationScheduler {
 
     private final NotificationClient notificationClient;
 
-    @Scheduled(cron = "30 7 16 * * *", zone = "Asia/Tomsk")
+    @Scheduled(cron = "0 0 10 * * *", zone = "Asia/Tomsk")
     public void sendNotification() {
         LocalDate today = LocalDate.now(ZoneId.of("Asia/Tomsk"));
         LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
