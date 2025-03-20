@@ -3,7 +3,7 @@ services:
   administrationservice:
     container_name: administrationservice
     build:
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-local
       context: .
     hostname: administrationservice
     ports:

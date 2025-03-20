@@ -1,7 +1,18 @@
 server:
   port: 8080
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+
 spring:
+  profiles:
+    active: "@activatedProperties@"
   jpa:
     show-sql: true
     properties:

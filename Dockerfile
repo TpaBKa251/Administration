@@ -1,4 +1,6 @@
 FROM openjdk:17-jdk-slim
-COPY ./build/libs/Administration-0.0.1-SNAPSHOT.jar /opt/service.jar
+WORKDIR /app
+COPY . .
+RUN chmod +x gradlew && ./gradlew assemble
 EXPOSE 8080
-CMD ["java", "-jar", "/opt/service.jar"]
+CMD ["java", "-Dspring.profiles.active=prod", "-jar", "/app/build/libs/Administration-0.0.1-SNAPSHOT.jar"]
