@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.tpu.hostel.administration.client.UserServiceClient;
+import ru.tpu.hostel.administration.common.logging.LogFilter;
 import ru.tpu.hostel.administration.dto.request.DocumentEditRequestDto;
 import ru.tpu.hostel.administration.dto.request.DocumentRequestDto;
 import ru.tpu.hostel.administration.dto.response.DocumentResponseDto;
@@ -25,16 +26,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DocumentServiceImpl implements DocumentService {
 
+    public static final String DOCUMENT_NOT_FOUND = "Документ не найден";
     private final DocumentRepository documentRepository;
     private final UserServiceClient userServiceClient;
 
     @Override
     public DocumentResponseDto addDocument(DocumentRequestDto documentRequestDto) {
-//        ResponseEntity<?> response = userServiceClient.getUserById(documentRequestDto.user());
-//
-//        if (!response.getStatusCode().is2xxSuccessful()) {
-//            throw new UserNotFound("Пользователь не найден");
-//        }
 
         Document document = DocumentMapper.mapDocumentRequestToDocument(documentRequestDto);
 
@@ -46,7 +43,7 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     public DocumentResponseDto editDocument(DocumentEditRequestDto documentEditRequestDto) {
         Document document = documentRepository.findById(documentEditRequestDto.id())
-                .orElseThrow(() -> new DocumentNotFound("Документ не найден"));
+                .orElseThrow(() -> new DocumentNotFound(DOCUMENT_NOT_FOUND));
 
         document.setStartDate(documentEditRequestDto.startDate());
         document.setEndDate(documentEditRequestDto.endDate());
@@ -56,20 +53,22 @@ public class DocumentServiceImpl implements DocumentService {
         return DocumentMapper.mapDocumentToDocumentResponseDto(document);
     }
 
+    @LogFilter(enableParamsLogging = false)
     @Override
     public DocumentResponseDto getDocumentById(UUID documentId) {
         Document document = documentRepository.findById(documentId)
-                .orElseThrow(() -> new DocumentNotFound("Документ не найден"));
+                .orElseThrow(() -> new DocumentNotFound(DOCUMENT_NOT_FOUND));
 
         return DocumentMapper.mapDocumentToDocumentResponseDto(document);
     }
 
+    @LogFilter(enableParamsLogging = false)
     @Override
     public List<DocumentResponseDto> getAllUserDocuments(UUID userId) {
         List<Document> documents = documentRepository.findAllByUser(userId);
 
         if (documents.isEmpty()) {
-            throw new DocumentNotFound("Документ не найден");
+            throw new DocumentNotFound(DOCUMENT_NOT_FOUND);
         }
 
         return documents
@@ -78,10 +77,11 @@ public class DocumentServiceImpl implements DocumentService {
                 .toList();
     }
 
+    @LogFilter(enableParamsLogging = false)
     @Override
     public DocumentResponseDto getUserDocumentsByType(UUID userId, DocumentType documentType) {
         Document document = documentRepository.findByUserAndType(userId, documentType)
-                .orElseThrow(() -> new DocumentNotFound("Документ не найден"));
+                .orElseThrow(() -> new DocumentNotFound(DOCUMENT_NOT_FOUND));
 
         return DocumentMapper.mapDocumentToDocumentResponseDto(document);
     }

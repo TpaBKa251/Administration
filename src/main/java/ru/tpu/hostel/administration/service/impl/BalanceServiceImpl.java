@@ -6,7 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ru.tpu.hostel.administration.client.UserServiceClient;
+import ru.tpu.hostel.administration.common.logging.LogFilter;
 import ru.tpu.hostel.administration.dto.request.BalanceRequestDto;
 import ru.tpu.hostel.administration.dto.response.BalanceResponseDto;
 import ru.tpu.hostel.administration.dto.response.BalanceShortResponseDto;
@@ -24,23 +24,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class BalanceServiceImpl implements BalanceService {
 
+    public static final String BALANCE_NOT_FOUND = "Баланс не найден";
     private final BalanceRepository balanceRepository;
-    private final UserServiceClient userServiceClient;
 
     @Override
     public BalanceResponseDto addBalance(BalanceRequestDto balanceRequestDto) {
-//        ResponseEntity<?> response;
-//
-//        try {
-//            response = userServiceClient.getUserById(balanceRequestDto.user());
-//        } catch (Exception e) {
-//            throw new UserNotFound("Пользователь не найден");
-//        }
-//
-//
-//        if (!response.getStatusCode().is2xxSuccessful()) {
-//            throw new UserNotFound("Пользователь не найден");
-//        }
 
         Balance balance = BalanceMapper.mapBalanceRequestDtoToBalance(balanceRequestDto);
 
@@ -85,18 +73,20 @@ public class BalanceServiceImpl implements BalanceService {
         return BalanceMapper.mapBalanceToBalanceResponseDto(balance);
     }
 
+    @LogFilter(enableParamsLogging = false)
     @Override
     public BalanceResponseDto getBalance(UUID userId) {
         Balance balance = balanceRepository.findById(userId)
-                .orElseThrow(() -> new BalanceNotFound("Баланс не найден"));
+                .orElseThrow(() -> new BalanceNotFound(BALANCE_NOT_FOUND));
 
         return BalanceMapper.mapBalanceToBalanceResponseDto(balance);
     }
 
+    @LogFilter(enableParamsLogging = false)
     @Override
     public BalanceShortResponseDto getBalanceShort(UUID userId) {
         Balance balance = balanceRepository.findById(userId)
-                .orElseThrow(() -> new BalanceNotFound("Баланс не найден"));
+                .orElseThrow(() -> new BalanceNotFound(BALANCE_NOT_FOUND));
 
         return BalanceMapper.mapBalanceToBalanceShortResponseDto(balance);
     }
@@ -116,7 +106,7 @@ public class BalanceServiceImpl implements BalanceService {
         }
 
         if (balances.isEmpty()) {
-            throw new BalanceNotFound("Баланс не найден");
+            throw new BalanceNotFound(BALANCE_NOT_FOUND);
         }
 
         return balances.stream()
