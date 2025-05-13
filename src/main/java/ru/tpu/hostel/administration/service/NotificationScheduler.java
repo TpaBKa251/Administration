@@ -10,6 +10,7 @@ import ru.tpu.hostel.administration.entity.Balance;
 import ru.tpu.hostel.administration.entity.Document;
 import ru.tpu.hostel.administration.repository.BalanceRepository;
 import ru.tpu.hostel.administration.repository.DocumentRepository;
+import ru.tpu.hostel.internal.common.logging.LogFilter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -37,6 +38,7 @@ public class NotificationScheduler {
     private final NotificationClient notificationClient;
 
     @Scheduled(cron = "0 0 10 * * *", zone = "Asia/Tomsk")
+    @LogFilter(enableResultLogging = false)
     public void sendNotification() {
         LocalDate today = LocalDate.now(ZoneId.of("Asia/Tomsk"));
         LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());

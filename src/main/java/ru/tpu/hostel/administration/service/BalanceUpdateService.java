@@ -6,6 +6,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import ru.tpu.hostel.administration.entity.Balance;
 import ru.tpu.hostel.administration.repository.BalanceRepository;
+import ru.tpu.hostel.internal.common.logging.LogFilter;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,6 +21,7 @@ public class BalanceUpdateService {
     private final BalanceRepository balanceRepository;
 
     @Scheduled(cron = "0 0 0 L * ?", zone = "Asia/Tomsk")
+    @LogFilter(enableResultLogging = false)
     public void updateBalance() {
         List<Balance> balances = balanceRepository.findAll();
 

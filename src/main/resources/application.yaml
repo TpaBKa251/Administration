@@ -5,29 +5,59 @@ management:
   endpoints:
     web:
       exposure:
-        include: health
+        include: health, prometheus, info, beans, trace
   endpoint:
     health:
       show-details: always
+  tracing:
+    enabled: true
+
+logging:
+  file:
+    name: ./logs/application.log
+  level:
+    org.hibernate: OFF
 
 spring:
+  application:
+    name: administration-service
   profiles:
     active: "@activatedProperties@"
+
   jpa:
-    show-sql: true
+    hibernate:
+      ddl-auto: validate
     properties:
       hibernate:
-        format_sql: true
+        jdbc:
+          batch_size: 50
+          order_inserts: true
+          order_updates: true
+        generate_statistics: false
+
   datasource:
     url: jdbc:postgresql://hostelDB:5432/hostelService
     username: hostel
     password: ilia
+
   flyway:
     jdbc-properties:
       enabled: true
       locations:
         - db.migration
     schemas: administration
+
+  cloud:
+    openfeign:
+      micrometer:
+        enabled: true
+
+otlp:
+  tracing:
+    export-enabled: true
+    endpoint: http://tempo:4317
+    timeout: 5000
+    service-name: administration-service
 
 springdoc:
   swagger-ui:

@@ -6,17 +6,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.tpu.hostel.administration.client.UserServiceClient;
-import ru.tpu.hostel.administration.common.logging.LogFilter;
 import ru.tpu.hostel.administration.dto.request.DocumentEditRequestDto;
 import ru.tpu.hostel.administration.dto.request.DocumentRequestDto;
 import ru.tpu.hostel.administration.dto.response.DocumentResponseDto;
 import ru.tpu.hostel.administration.entity.Document;
 import ru.tpu.hostel.administration.enums.DocumentType;
-import ru.tpu.hostel.administration.exception.DocumentNotFound;
 import ru.tpu.hostel.administration.mapper.DocumentMapper;
 import ru.tpu.hostel.administration.repository.DocumentRepository;
 import ru.tpu.hostel.administration.service.DocumentService;
+import ru.tpu.hostel.internal.exception.ServiceException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -30,6 +30,7 @@ public class DocumentServiceImpl implements DocumentService {
     private final DocumentRepository documentRepository;
     private final UserServiceClient userServiceClient;
 
+    @Transactional
     @Override
     public DocumentResponseDto addDocument(DocumentRequestDto documentRequestDto) {
 
@@ -40,10 +41,11 @@ public class DocumentServiceImpl implements DocumentService {
         return DocumentMapper.mapDocumentToDocumentResponseDto(document);
     }
 
+    @Transactional
     @Override
     public DocumentResponseDto editDocument(DocumentEditRequestDto documentEditRequestDto) {
         Document document = documentRepository.findById(documentEditRequestDto.id())
-                .orElseThrow(() -> new DocumentNotFound(DOCUMENT_NOT_FOUND));
+                .orElseThrow(() -> new ServiceException.BadRequest(DOCUMENT_NOT_FOUND));
 
         document.setStartDate(documentEditRequestDto.startDate());
         document.setEndDate(documentEditRequestDto.endDate());
@@ -53,22 +55,20 @@ public class DocumentServiceImpl implements DocumentService {
         return DocumentMapper.mapDocumentToDocumentResponseDto(document);
     }
 
-    @LogFilter(enableParamsLogging = false)
     @Override
     public DocumentResponseDto getDocumentById(UUID documentId) {
         Document document = documentRepository.findById(documentId)
-                .orElseThrow(() -> new DocumentNotFound(DOCUMENT_NOT_FOUND));
+                .orElseThrow(() -> new ServiceException.BadRequest(DOCUMENT_NOT_FOUND));
 
         return DocumentMapper.mapDocumentToDocumentResponseDto(document);
     }
 
-    @LogFilter(enableParamsLogging = false)
     @Override
     public List<DocumentResponseDto> getAllUserDocuments(UUID userId) {
         List<Document> documents = documentRepository.findAllByUser(userId);
 
         if (documents.isEmpty()) {
-            throw new DocumentNotFound(DOCUMENT_NOT_FOUND);
+            throw new ServiceException.BadRequest(DOCUMENT_NOT_FOUND);
         }
 
         return documents
@@ -77,11 +77,10 @@ public class DocumentServiceImpl implements DocumentService {
                 .toList();
     }
 
-    @LogFilter(enableParamsLogging = false)
     @Override
     public DocumentResponseDto getUserDocumentsByType(UUID userId, DocumentType documentType) {
         Document document = documentRepository.findByUserAndType(userId, documentType)
-                .orElseThrow(() -> new DocumentNotFound(DOCUMENT_NOT_FOUND));
+                .orElseThrow(() -> new ServiceException.BadRequest(DOCUMENT_NOT_FOUND));
 
         return DocumentMapper.mapDocumentToDocumentResponseDto(document);
     }
@@ -161,7 +160,7 @@ public class DocumentServiceImpl implements DocumentService {
         }
 
         if (documents.isEmpty()) {
-            throw new DocumentNotFound("Документы не найдены");
+            throw new ServiceException.BadRequest("Документы не найдены");
         }
 
         return documents.stream()
