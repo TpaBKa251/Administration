@@ -1,12 +1,13 @@
 package ru.tpu.hostel.administration.mapper;
 
+import lombok.experimental.UtilityClass;
 import org.springframework.stereotype.Component;
 import ru.tpu.hostel.administration.dto.request.BalanceRequestDto;
 import ru.tpu.hostel.administration.dto.response.BalanceResponseDto;
 import ru.tpu.hostel.administration.dto.response.BalanceShortResponseDto;
 import ru.tpu.hostel.administration.entity.Balance;
 
-@Component
+@UtilityClass
 public class BalanceMapper {
 
     public static BalanceResponseDto mapBalanceToBalanceResponseDto(Balance balance) {

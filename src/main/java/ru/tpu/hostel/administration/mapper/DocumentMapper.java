@@ -1,12 +1,13 @@
 package ru.tpu.hostel.administration.mapper;
 
+import lombok.experimental.UtilityClass;
 import org.springframework.stereotype.Component;
 import ru.tpu.hostel.administration.dto.request.DocumentRequestDto;
 import ru.tpu.hostel.administration.dto.response.DocumentResponseDto;
 import ru.tpu.hostel.administration.dto.response.DocumentShortResponseDto;
 import ru.tpu.hostel.administration.entity.Document;
 
-@Component
+@UtilityClass
 public class DocumentMapper {
 
     public static Document mapDocumentRequestToDocument(DocumentRequestDto documentRequestDto) {

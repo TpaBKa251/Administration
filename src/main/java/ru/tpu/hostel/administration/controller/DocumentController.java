@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.tpu.hostel.administration.dto.request.DocumentEditRequestDto;
 import ru.tpu.hostel.administration.dto.request.DocumentRequestDto;
 import ru.tpu.hostel.administration.dto.response.DocumentResponseDto;
-import ru.tpu.hostel.administration.enums.DocumentType;
+import ru.tpu.hostel.administration.entity.DocumentType;
 import ru.tpu.hostel.administration.service.DocumentService;
 
 import java.time.LocalDate;

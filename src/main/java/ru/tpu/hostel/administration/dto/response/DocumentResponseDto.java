@@ -1,6 +1,6 @@
 package ru.tpu.hostel.administration.dto.response;
 
-import ru.tpu.hostel.administration.enums.DocumentType;
+import ru.tpu.hostel.administration.entity.DocumentType;
 
 import java.time.LocalDate;
 import java.util.UUID;

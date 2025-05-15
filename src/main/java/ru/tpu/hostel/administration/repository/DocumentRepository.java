@@ -1,13 +1,16 @@
 package ru.tpu.hostel.administration.repository;
 
+import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.tpu.hostel.administration.entity.Document;
-import ru.tpu.hostel.administration.enums.DocumentType;
+import ru.tpu.hostel.administration.entity.DocumentType;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -147,4 +150,10 @@ public interface DocumentRepository extends JpaRepository<Document, UUID> {
     List<Document> findByUserInOrderByUserAscTypeAsc(List<UUID> userIds);
 
     List<Document> findAllByEndDateEquals(LocalDate endDate);
+
+    @Query("SELECT d FROM Document d WHERE d.id = :id")
+    @Transactional
+    @Lock(LockModeType.OPTIMISTIC)
+    Optional<Document> findByIdOptimistic(@Param("id") UUID id);
+
 }

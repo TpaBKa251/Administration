@@ -8,9 +8,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.Getter;
 import lombok.Setter;
-import ru.tpu.hostel.administration.enums.DocumentType;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -38,4 +38,8 @@ public class Document {
 
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
+
+    @Version
+    @Column(name = "version", nullable = false)
+    private Long version;
 }

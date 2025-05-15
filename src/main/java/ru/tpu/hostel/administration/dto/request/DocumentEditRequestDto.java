@@ -2,7 +2,6 @@ package ru.tpu.hostel.administration.dto.request;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
-import ru.tpu.hostel.administration.enums.DocumentType;
 
 import java.time.LocalDate;
 import java.util.UUID;

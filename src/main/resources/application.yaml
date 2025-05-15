@@ -59,6 +59,10 @@ otlp:
     timeout: 5000
     service-name: administration-service
 
+rest:
+  base-url:
+    notification-service: http://notificationservice:8080
+
 springdoc:
   swagger-ui:
     enabled: true

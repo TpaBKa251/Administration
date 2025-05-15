@@ -5,14 +5,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.tpu.hostel.administration.client.UserServiceClient;
 import ru.tpu.hostel.administration.dto.request.DocumentEditRequestDto;
 import ru.tpu.hostel.administration.dto.request.DocumentRequestDto;
 import ru.tpu.hostel.administration.dto.response.DocumentResponseDto;
 import ru.tpu.hostel.administration.entity.Document;
-import ru.tpu.hostel.administration.enums.DocumentType;
+import ru.tpu.hostel.administration.entity.DocumentType;
 import ru.tpu.hostel.administration.mapper.DocumentMapper;
 import ru.tpu.hostel.administration.repository.DocumentRepository;
 import ru.tpu.hostel.administration.service.DocumentService;
@@ -27,30 +27,31 @@ import java.util.UUID;
 public class DocumentServiceImpl implements DocumentService {
 
     public static final String DOCUMENT_NOT_FOUND = "Документ не найден";
+
     private final DocumentRepository documentRepository;
-    private final UserServiceClient userServiceClient;
 
     @Transactional
     @Override
     public DocumentResponseDto addDocument(DocumentRequestDto documentRequestDto) {
-
         Document document = DocumentMapper.mapDocumentRequestToDocument(documentRequestDto);
-
         documentRepository.save(document);
-
         return DocumentMapper.mapDocumentToDocumentResponseDto(document);
     }
 
     @Transactional
     @Override
     public DocumentResponseDto editDocument(DocumentEditRequestDto documentEditRequestDto) {
-        Document document = documentRepository.findById(documentEditRequestDto.id())
+        Document document = documentRepository.findByIdOptimistic(documentEditRequestDto.id())
                 .orElseThrow(() -> new ServiceException.BadRequest(DOCUMENT_NOT_FOUND));
 
         document.setStartDate(documentEditRequestDto.startDate());
         document.setEndDate(documentEditRequestDto.endDate());
 
-        documentRepository.save(document);
+        try {
+            documentRepository.save(document);
+        } catch (ObjectOptimisticLockingFailureException e) {
+            throw new ServiceException.Conflict("Не удалось отредактировать документ. Попробуйте позже");
+        }
 
         return DocumentMapper.mapDocumentToDocumentResponseDto(document);
     }
@@ -157,10 +158,6 @@ public class DocumentServiceImpl implements DocumentService {
             }
         } else {
             documents = documentRepository.findAll(pageable);
-        }
-
-        if (documents.isEmpty()) {
-            throw new ServiceException.BadRequest("Документы не найдены");
         }
 
         return documents.stream()

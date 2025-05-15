@@ -3,7 +3,7 @@ package ru.tpu.hostel.administration.service;
 import ru.tpu.hostel.administration.dto.request.DocumentEditRequestDto;
 import ru.tpu.hostel.administration.dto.request.DocumentRequestDto;
 import ru.tpu.hostel.administration.dto.response.DocumentResponseDto;
-import ru.tpu.hostel.administration.enums.DocumentType;
+import ru.tpu.hostel.administration.entity.DocumentType;
 
 import java.time.LocalDate;
 import java.util.List;

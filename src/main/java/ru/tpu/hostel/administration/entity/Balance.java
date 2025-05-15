@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,4 +23,8 @@ public class Balance {
 
     @Column(name = "balance", nullable = false) // Поле balance не может быть null
     private BigDecimal balance;
+
+    @Version
+    @Column(name = "version", nullable = false)
+    private Long version;
 }

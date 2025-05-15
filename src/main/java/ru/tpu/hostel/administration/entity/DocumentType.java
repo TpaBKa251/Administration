@@ -1,4 +1,4 @@
-package ru.tpu.hostel.administration.enums;
+package ru.tpu.hostel.administration.entity;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

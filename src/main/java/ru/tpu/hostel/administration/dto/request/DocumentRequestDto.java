@@ -1,7 +1,7 @@
 package ru.tpu.hostel.administration.dto.request;
 
 import jakarta.validation.constraints.NotNull;
-import ru.tpu.hostel.administration.enums.DocumentType;
+import ru.tpu.hostel.administration.entity.DocumentType;
 
 import java.time.LocalDate;
 import java.util.UUID;

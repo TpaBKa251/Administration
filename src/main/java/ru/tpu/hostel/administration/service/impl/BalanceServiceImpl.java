@@ -5,6 +5,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tpu.hostel.administration.dto.request.BalanceRequestDto;
@@ -24,24 +28,24 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class BalanceServiceImpl implements BalanceService {
 
-    public static final String BALANCE_NOT_FOUND = "Баланс не найден";
+    private static final String BALANCE_NOT_FOUND = "Баланс не найден";
+
+    private static final String BALANCE_EDIT_EXCEPTION_MESSAGE = "Не удалось отредактировать баланс. Попробуйте позже";
+
     private final BalanceRepository balanceRepository;
 
     @Transactional
     @Override
     public BalanceResponseDto addBalance(BalanceRequestDto balanceRequestDto) {
-
         Balance balance = BalanceMapper.mapBalanceRequestDtoToBalance(balanceRequestDto);
-
         balanceRepository.save(balance);
-
         return BalanceMapper.mapBalanceToBalanceResponseDto(balance);
     }
 
     @Transactional
     @Override
     public BalanceResponseDto editBalance(BalanceRequestDto balanceRequestDto) {
-        Balance balance = balanceRepository.findById(balanceRequestDto.user())
+        Balance balance = balanceRepository.findByIdOptimistic(balanceRequestDto.user())
                 .orElse(null);
 
         if (balance == null) {
@@ -52,14 +56,24 @@ public class BalanceServiceImpl implements BalanceService {
         }
 
         balance.setBalance(balanceRequestDto.balance());
-        balanceRepository.save(balance);
+        try {
+            balanceRepository.save(balance);
+        } catch (ObjectOptimisticLockingFailureException e) {
+            throw new ServiceException.Conflict(BALANCE_EDIT_EXCEPTION_MESSAGE);
+        }
 
         return BalanceMapper.mapBalanceToBalanceResponseDto(balance);
     }
 
+    @Transactional
     @Override
+    @Retryable(
+            retryFor = ObjectOptimisticLockingFailureException.class,
+            backoff = @Backoff(delay = 100, multiplier = 2),
+            recover = "recoverEditBalanceWithAddingAmount"
+    )
     public BalanceResponseDto editBalanceWithAddingAmount(BalanceRequestDto balanceRequestDto) {
-        Balance balance = balanceRepository.findById(balanceRequestDto.user())
+        Balance balance = balanceRepository.findByIdOptimistic(balanceRequestDto.user())
                 .orElse(null);
 
         if (balance == null) {
@@ -73,6 +87,14 @@ public class BalanceServiceImpl implements BalanceService {
         balanceRepository.save(balance);
 
         return BalanceMapper.mapBalanceToBalanceResponseDto(balance);
+    }
+
+    @Recover
+    public BalanceResponseDto recoverEditBalanceWithAddingAmount(
+            ObjectOptimisticLockingFailureException e,
+            BalanceRequestDto balanceRequestDto
+    ) {
+        throw new ServiceException.Conflict(BALANCE_EDIT_EXCEPTION_MESSAGE);
     }
 
     @Override
@@ -103,10 +125,6 @@ public class BalanceServiceImpl implements BalanceService {
             balances = balanceRepository.findAllByBalanceGreaterThan(value, pageable);
         } else {
             balances = balanceRepository.findAll(pageable);
-        }
-
-        if (balances.isEmpty()) {
-            throw new ServiceException.BadRequest(BALANCE_NOT_FOUND);
         }
 
         return balances.stream()

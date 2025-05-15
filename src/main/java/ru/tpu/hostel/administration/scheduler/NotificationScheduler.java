@@ -1,13 +1,14 @@
-package ru.tpu.hostel.administration.service;
+package ru.tpu.hostel.administration.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import ru.tpu.hostel.administration.client.NotificationClient;
+import ru.tpu.hostel.administration.external.rest.notification.NotificationClient;
 import ru.tpu.hostel.administration.entity.Balance;
 import ru.tpu.hostel.administration.entity.Document;
+import ru.tpu.hostel.administration.external.rest.notification.dto.NotificationRequestDto;
+import ru.tpu.hostel.administration.external.rest.notification.dto.NotificationType;
 import ru.tpu.hostel.administration.repository.BalanceRepository;
 import ru.tpu.hostel.administration.repository.DocumentRepository;
 import ru.tpu.hostel.internal.common.logging.LogFilter;
@@ -21,7 +22,6 @@ import java.util.UUID;
 
 @Slf4j
 @Service
-@EnableScheduling
 @RequiredArgsConstructor
 public class NotificationScheduler {
 
@@ -60,9 +60,9 @@ public class NotificationScheduler {
 
         for (Balance balance : balances) {
             try {
-                NotificationClient.NotificationRequestDto notification = new NotificationClient.NotificationRequestDto(
+                NotificationRequestDto notification = new NotificationRequestDto(
                         balance.getUser(),
-                        NotificationClient.NotificationType.BALANCE,
+                        NotificationType.BALANCE,
                         "Пополните баланс общежития",
                         "Ваш баланс составляет " + balance.getBalance()
                                 + ". Его необходимо пополнить "
@@ -81,9 +81,9 @@ public class NotificationScheduler {
 
         for (Document document : documents) {
             try {
-                NotificationClient.NotificationRequestDto notification = new NotificationClient.NotificationRequestDto(
+                NotificationRequestDto notification = new NotificationRequestDto(
                         document.getUser(),
-                        NotificationClient.NotificationType.DOCUMENT,
+                        NotificationType.DOCUMENT,
                         "Обновите документ \"" + document.getType().getDocumentName() + "\"",
                         document.getType().getDocumentName()
                                 + " заканчивается "
