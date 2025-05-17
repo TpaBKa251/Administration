@@ -1,6 +1,7 @@
 package ru.tpu.hostel.administration.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -34,8 +35,13 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     public DocumentResponseDto addDocument(DocumentRequestDto documentRequestDto) {
         Document document = DocumentMapper.mapDocumentRequestToDocument(documentRequestDto);
-        documentRepository.save(document);
-        return DocumentMapper.mapDocumentToDocumentResponseDto(document);
+        try {
+            return DocumentMapper.mapDocumentToDocumentResponseDto(documentRepository.save(document));
+        } catch (ConstraintViolationException e) {
+            throw new ServiceException.Conflict(
+                    "Вы не можете добавить второй документ " + documentRequestDto.type().getDocumentName()
+            );
+        }
     }
 
     @Transactional
@@ -50,7 +56,9 @@ public class DocumentServiceImpl implements DocumentService {
         try {
             documentRepository.save(document);
         } catch (ObjectOptimisticLockingFailureException e) {
-            throw new ServiceException.Conflict("Не удалось отредактировать документ. Попробуйте позже");
+            throw new ServiceException.Conflict(
+                    "Кто-то уже отредактировал документ. Обновите данные и попробуйте еще раз"
+            );
         }
 
         return DocumentMapper.mapDocumentToDocumentResponseDto(document);

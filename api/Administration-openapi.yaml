@@ -1,0 +1,417 @@
+openapi: "3.1.0"
+info:
+  title: "Administration API"
+  description: "Administration API"
+  version: "1.0.0"
+servers:
+  - url: "https://Administration"
+paths:
+  /balance/edit:
+    patch:
+      summary: "PATCH balance/edit"
+      operationId: "editBalance"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BalanceRequestDto"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/BalanceResponseDto"
+  /balance/edit/adding:
+    patch:
+      summary: "PATCH balance/edit/adding"
+      operationId: "editAddBalance"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BalanceRequestDto"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/BalanceResponseDto"
+  /balance:
+    post:
+      summary: "POST balance"
+      operationId: "addBalance"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BalanceRequestDto"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/BalanceResponseDto"
+  /balance/get/{id}:
+    get:
+      summary: "GET balance/get/{id}"
+      operationId: "getBalance"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            format: "uuid"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/BalanceResponseDto"
+  /balance/get/all:
+    get:
+      summary: "GET balance/get/all"
+      operationId: "getAllBalances"
+      parameters:
+        - name: "page"
+          in: "query"
+          required: false
+          schema:
+            type: "integer"
+            format: "int32"
+            default: "0"
+        - name: "size"
+          in: "query"
+          required: false
+          schema:
+            type: "integer"
+            format: "int32"
+            default: "1000000000"
+        - name: "negative"
+          in: "query"
+          required: false
+          schema:
+            type: "boolean"
+        - name: "value"
+          in: "query"
+          required: false
+          schema:
+            $ref: "#/components/schemas/BigDecimal"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/BalanceResponseDto"
+  /balance/get/all/by/users:
+    get:
+      summary: "GET balance/get/all/by/users"
+      operationId: "getAllBalancesByUsers"
+      parameters:
+        - name: "userIds"
+          in: "query"
+          required: true
+          schema:
+            type: "array"
+            items:
+              type: "string"
+              format: "uuid"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/BalanceResponseDto"
+  /balance/get/short/{id}:
+    get:
+      summary: "GET balance/get/short/{id}"
+      operationId: "getBalanceShort"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            format: "uuid"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/BalanceShortResponseDto"
+  /documents/edit:
+    patch:
+      summary: "PATCH documents/edit"
+      operationId: "editDocument"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DocumentEditRequestDto"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DocumentResponseDto"
+  /documents:
+    post:
+      summary: "POST documents"
+      operationId: "addDocument"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DocumentRequestDto"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DocumentResponseDto"
+  /documents/get/by/id/{id}:
+    get:
+      summary: "GET documents/get/by/id/{id}"
+      operationId: "getDocumentById"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            format: "uuid"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DocumentResponseDto"
+  /documents/get/all/user/{userId}:
+    get:
+      summary: "GET documents/get/all/user/{userId}"
+      operationId: "getAllDocumentsByUser"
+      parameters:
+        - name: "userId"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            format: "uuid"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/DocumentResponseDto"
+  /documents/get/all:
+    get:
+      summary: "GET documents/get/all"
+      operationId: "getAllDocuments"
+      parameters:
+        - name: "page"
+          in: "query"
+          required: false
+          schema:
+            type: "integer"
+            format: "int32"
+            default: "0"
+        - name: "size"
+          in: "query"
+          required: false
+          schema:
+            type: "integer"
+            format: "int32"
+            default: "1000000000"
+        - name: "fluraPast"
+          in: "query"
+          required: false
+          schema:
+            type: "boolean"
+        - name: "fluraDate"
+          in: "query"
+          required: false
+          schema:
+            type: "string"
+            format: "date"
+        - name: "certPast"
+          in: "query"
+          required: false
+          schema:
+            type: "boolean"
+        - name: "certDate"
+          in: "query"
+          required: false
+          schema:
+            type: "string"
+            format: "date"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/DocumentResponseDto"
+  /documents/get/type/{documentType}/user/{userId}:
+    get:
+      summary: "GET documents/get/type/{documentType}/user/{userId}"
+      operationId: "getDocumentByType"
+      parameters:
+        - name: "documentType"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            enum:
+              - "CERTIFICATE"
+              - "FLUOROGRAPHY"
+        - name: "userId"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            format: "uuid"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DocumentResponseDto"
+  /documents/get/all/by/users:
+    get:
+      summary: "GET documents/get/all/by/users"
+      operationId: "getAllDocumentsByUsers"
+      parameters:
+        - name: "userIds"
+          in: "query"
+          required: true
+          schema:
+            type: "array"
+            items:
+              type: "string"
+              format: "uuid"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/DocumentResponseDto"
+components:
+  schemas:
+    BigDecimal:
+      type: "object"
+      properties: { }
+    BalanceRequestDto:
+      type: "object"
+      properties:
+        user:
+          type: "string"
+          format: "uuid"
+          nullable: true
+        balance:
+          nullable: true
+          $ref: "#/components/schemas/BigDecimal"
+    BalanceResponseDto:
+      type: "object"
+      properties:
+        user:
+          type: "string"
+          format: "uuid"
+          nullable: true
+        balance:
+          nullable: true
+          $ref: "#/components/schemas/BigDecimal"
+    BalanceShortResponseDto:
+      type: "object"
+      properties:
+        balance:
+          nullable: true
+          $ref: "#/components/schemas/BigDecimal"
+    DocumentEditRequestDto:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          format: "uuid"
+          nullable: true
+        startDate:
+          type: "string"
+          format: "date"
+          nullable: true
+        endDate:
+          type: "string"
+          format: "date"
+          nullable: true
+    DocumentResponseDto:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          format: "uuid"
+          nullable: true
+        user:
+          type: "string"
+          format: "uuid"
+          nullable: true
+        type:
+          type: "string"
+          nullable: true
+          enum:
+            - "CERTIFICATE"
+            - "FLUOROGRAPHY"
+        startDate:
+          type: "string"
+          format: "date"
+          nullable: true
+        endDate:
+          type: "string"
+          format: "date"
+          nullable: true
+    DocumentRequestDto:
+      type: "object"
+      properties:
+        user:
+          type: "string"
+          format: "uuid"
+          nullable: true
+        type:
+          type: "string"
+          nullable: true
+          enum:
+            - "CERTIFICATE"
+            - "FLUOROGRAPHY"
+        startDate:
+          type: "string"
+          format: "date"
+          nullable: true
+        endDate:
+          type: "string"
+          format: "date"
+          nullable: true

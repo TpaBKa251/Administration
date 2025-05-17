@@ -30,7 +30,8 @@ public class BalanceServiceImpl implements BalanceService {
 
     private static final String BALANCE_NOT_FOUND = "Баланс не найден";
 
-    private static final String BALANCE_EDIT_EXCEPTION_MESSAGE = "Не удалось отредактировать баланс. Попробуйте позже";
+    private static final String BALANCE_EDIT_EXCEPTION_MESSAGE
+            = "Кто-то уже отредактировал баланс. Обновите данные и попробуйте еще раз";
 
     private final BalanceRepository balanceRepository;
 
