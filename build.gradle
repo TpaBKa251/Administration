@@ -50,9 +50,13 @@ sonarqube {
     }
 }
 
+ext {
+    set('internalLibraryVersion', "1.2.2")
+}
+
 dependencies {
-    implementation 'ru.tpu.hostel:hostel-core:1.1.1'
-    implementation 'ru.tpu.hostel:hostel-feign:1.1.1'
+    implementation "ru.tpu.hostel:hostel-core:${internalLibraryVersion}"
+    implementation "ru.tpu.hostel:hostel-feign:${internalLibraryVersion}"
 
     implementation platform("org.springframework.cloud:spring-cloud-dependencies:2023.0.2")
     implementation 'commons-io:commons-io:2.14.0'
