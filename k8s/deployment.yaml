@@ -17,7 +17,7 @@ spec:
     spec:
       automountServiceAccountToken: false
       nodeSelector:
-        kubernetes.io/hostname: "monitoring"
+        kubernetes.io/hostname: "vm-8ca664"
       containers:
         - name: administrationservice
           image: ghcr.io/tpabka251/administrationservice:latest
