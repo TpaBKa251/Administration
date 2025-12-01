@@ -6,9 +6,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Recover;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tpu.hostel.administration.dto.request.BalanceRequestDto;
@@ -68,11 +65,11 @@ public class BalanceServiceImpl implements BalanceService {
 
     @Transactional
     @Override
-    @Retryable(
-            retryFor = ObjectOptimisticLockingFailureException.class,
-            backoff = @Backoff(delay = 100, multiplier = 2),
-            recover = "recoverEditBalanceWithAddingAmount"
-    )
+//    @Retryable(
+//            retryFor = ObjectOptimisticLockingFailureException.class,
+//            backoff = @Backoff(delay = 100, multiplier = 2),
+//            recover = "recoverEditBalanceWithAddingAmount"
+//    )
     public BalanceResponseDto editBalanceWithAddingAmount(BalanceRequestDto balanceRequestDto) {
         Balance balance = balanceRepository.findByIdOptimistic(balanceRequestDto.user())
                 .orElse(null);
@@ -85,18 +82,22 @@ public class BalanceServiceImpl implements BalanceService {
         }
 
         balance.setBalance(balanceRequestDto.balance().add(balance.getBalance()));
-        balanceRepository.save(balance);
+        try {
+            balanceRepository.flush();
+        } catch (ObjectOptimisticLockingFailureException e) {
+            throw new ServiceException.Conflict(BALANCE_EDIT_EXCEPTION_MESSAGE);
+        }
 
         return BalanceMapper.mapBalanceToBalanceResponseDto(balance);
     }
 
-    @Recover
-    public BalanceResponseDto recoverEditBalanceWithAddingAmount(
-            ObjectOptimisticLockingFailureException e,
-            BalanceRequestDto balanceRequestDto
-    ) {
-        throw new ServiceException.Conflict(BALANCE_EDIT_EXCEPTION_MESSAGE);
-    }
+//    @Recover
+//    public BalanceResponseDto recoverEditBalanceWithAddingAmount(
+//            ObjectOptimisticLockingFailureException e,
+//            BalanceRequestDto balanceRequestDto
+//    ) {
+//        throw new ServiceException.Conflict(BALANCE_EDIT_EXCEPTION_MESSAGE);
+//    }
 
     @Override
     public BalanceResponseDto getBalance(UUID userId) {

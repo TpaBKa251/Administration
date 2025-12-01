@@ -1,17 +1,24 @@
 package ru.tpu.hostel.administration.scheduler;
 
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanContext;
+import io.opentelemetry.api.trace.SpanKind;
+import io.opentelemetry.api.trace.StatusCode;
+import io.opentelemetry.context.Scope;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import ru.tpu.hostel.administration.external.rest.notification.NotificationClient;
 import ru.tpu.hostel.administration.entity.Balance;
 import ru.tpu.hostel.administration.entity.Document;
+import ru.tpu.hostel.administration.external.rest.notification.NotificationClient;
 import ru.tpu.hostel.administration.external.rest.notification.dto.NotificationRequestDto;
 import ru.tpu.hostel.administration.external.rest.notification.dto.NotificationType;
 import ru.tpu.hostel.administration.repository.BalanceRepository;
 import ru.tpu.hostel.administration.repository.DocumentRepository;
-import ru.tpu.hostel.internal.common.logging.LogFilter;
+import ru.tpu.hostel.internal.utils.LogFilter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -26,33 +33,63 @@ import java.util.UUID;
 public class NotificationScheduler {
 
     private static final int WEEK_IN_DAYS = 7;
+
     private static final int WEEK_IN_DAYS_PLUS_ONE = 8;
+
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
     private static final int ONE_DAY = 1;
+
     private static final int TWO_DAYS = 2;
+
     private static final BigDecimal BALANCE_TO_SEND_NOTIFICATION = new BigDecimal("1000");
 
+    private static final String SCOPE_NAME = "ru.tpu.hostel.administration.scheduler.notification";
+
     private final BalanceRepository balanceRepository;
+
     private final DocumentRepository documentRepository;
 
     private final NotificationClient notificationClient;
 
+    private final OpenTelemetry openTelemetry;
+
     @Scheduled(cron = "0 0 10 * * *", zone = "Asia/Tomsk")
     @LogFilter(enableResultLogging = false)
     public void sendNotification() {
-        LocalDate today = LocalDate.now(ZoneId.of("Asia/Tomsk"));
-        LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
-        LocalDate weekBeforeEnd = lastDayOfMonth.minusDays(WEEK_IN_DAYS);
+        Span span = openTelemetry.getTracer(SCOPE_NAME)
+                .spanBuilder("Send notification about Balance/Document")
+                .setSpanKind(SpanKind.INTERNAL)
+                .startSpan();
 
-        if (today.isEqual(weekBeforeEnd) || today.isEqual(lastDayOfMonth.minusDays(ONE_DAY))) {
-            sendNotificationAboutBalance(lastDayOfMonth);
+        try (Scope ignored = span.makeCurrent()) {
+            SpanContext context = span.getSpanContext();
+            MDC.put("traceId", context.getTraceId());
+            MDC.put("spanId", context.getSpanId());
+
+            LocalDate today = LocalDate.now(ZoneId.of("Asia/Tomsk"));
+            LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
+            LocalDate weekBeforeEnd = lastDayOfMonth.minusDays(WEEK_IN_DAYS);
+
+            if (today.isEqual(weekBeforeEnd) || today.isEqual(lastDayOfMonth.minusDays(ONE_DAY))) {
+                sendNotificationAboutBalance(lastDayOfMonth);
+            }
+
+            LocalDate dayForDocuments = today.plusDays(WEEK_IN_DAYS_PLUS_ONE);
+            sendNotificationAboutDocument(dayForDocuments);
+
+            dayForDocuments = today.plusDays(ONE_DAY);
+            sendNotificationAboutDocument(dayForDocuments);
+
+            span.setStatus(StatusCode.OK);
+        } catch (Exception e) {
+            span.setStatus(StatusCode.ERROR);
+            span.recordException(e);
+        } finally {
+            MDC.clear();
+            span.end();
         }
 
-        LocalDate dayForDocuments = today.plusDays(WEEK_IN_DAYS_PLUS_ONE);
-        sendNotificationAboutDocument(dayForDocuments);
-
-        dayForDocuments = today.plusDays(ONE_DAY);
-        sendNotificationAboutDocument(dayForDocuments);
     }
 
     private void sendNotificationAboutBalance(LocalDate lastDayOfMonth) {

@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+    <configuration default="false" name="AdministrationApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+        <option name="ACTIVE_PROFILES" value="dev" />
+        <option name="ALTERNATIVE_JRE_PATH" value="openjdk-25" />
+        <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+        <module name="Administration.main" />
+        <option name="SPRING_BOOT_MAIN_CLASS" value="ru.tpu.hostel.administration.AdministrationApplication" />
+        <method v="2">
+            <option name="Make" enabled="true" />
+        </method>
+    </configuration>
+</component>

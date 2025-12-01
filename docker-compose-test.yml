@@ -28,7 +28,7 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/test_db
+      SPRING_DATASOURCE_URL: jdbc:otel:postgresql://postgres:5432/test_db
       SPRING_DATASOURCE_USERNAME: test_user
       SPRING_DATASOURCE_PASSWORD: test_password
       RABBITMQ_SCHEDULES-SERVICE_USERNAME: test_user
